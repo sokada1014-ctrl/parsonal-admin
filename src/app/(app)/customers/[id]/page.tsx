@@ -96,7 +96,7 @@ export default async function CustomerDetailPage({
       </div>
 
       <Tabs defaultValue={initialTab}>
-        <TabsList className="mb-6 flex-wrap justify-start">
+        <TabsList className="mb-6 h-auto! flex-wrap justify-start gap-1">
           <TabsTrigger value="overview">概要</TabsTrigger>
           <TabsTrigger value="sessions">セッション</TabsTrigger>
           <TabsTrigger value="body-metrics">身体データ</TabsTrigger>

@@ -78,7 +78,7 @@ export function ScheduleGridClient({
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border bg-surface">
-        <div className="flex min-w-[640px]">
+        <div className={cn("flex", view === "week" && "min-w-[640px]")}>
           <div className="flex flex-col">
             <div className="h-12 shrink-0 border-b border-border" />
             <TimeGutter />

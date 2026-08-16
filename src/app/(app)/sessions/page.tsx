@@ -34,20 +34,25 @@ export default async function SessionsPage() {
           {sessions.map((session) => (
             <Link key={session.id} href={`/customers/${session.customerId}?tab=sessions`}>
               <Card className={cn("shadow-none", CARD_LIFT)}>
-                <CardContent className="flex flex-wrap items-center gap-4 p-4">
-                  <span className="w-20 shrink-0 text-sm font-medium text-text-primary">
-                    {formatDate(session.date)}
-                  </span>
-                  <span className="min-w-0 flex-1 truncate font-medium text-text-primary">
-                    {session.customerName}
-                  </span>
-                  <span className="shrink-0 text-sm text-text-secondary">担当: {session.staffName ?? "-"}</span>
-                  {session.condition && (
-                    <Badge variant="secondary" className="shrink-0 bg-muted text-text-secondary">
-                      {session.condition}
-                    </Badge>
-                  )}
-                  <span className="shrink-0 text-xs text-text-muted">種目 {session.exercises.length}件</span>
+                <CardContent className="flex flex-col gap-1.5 p-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="min-w-0 truncate text-base font-semibold text-text-primary">
+                      {session.customerName}
+                    </span>
+                    <span className="shrink-0 text-sm font-medium text-text-secondary">
+                      {formatDate(session.date)}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
+                    <span>担当: {session.staffName ?? "-"}</span>
+                    <span className="text-text-muted">・</span>
+                    <span>種目 {session.exercises.length}件</span>
+                    {session.condition && (
+                      <Badge variant="secondary" className="bg-muted text-text-secondary">
+                        {session.condition}
+                      </Badge>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
             </Link>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   addDays,
   eachDayOfInterval,
@@ -107,25 +108,55 @@ export default async function SchedulePage({
           <div className="grid grid-cols-7">
             {eachDayOfInterval({ start: rangeStart, end: addDays(rangeEnd, -1) }).map((day) => {
               const key = format(day, "yyyy-MM-dd");
-              const dayAppointments = (byDay.get(key) ?? []).slice(0, 4);
-              const overflow = (byDay.get(key)?.length ?? 0) - dayAppointments.length;
+              const allDayAppointments = byDay.get(key) ?? [];
+              const dayAppointments = allDayAppointments.slice(0, 4);
+              const overflow = allDayAppointments.length - dayAppointments.length;
+              const dotCount = Math.min(allDayAppointments.length, 3);
               return (
                 <div
                   key={key}
                   className={cn(
-                    "flex min-h-[110px] flex-col gap-1 border-r border-b border-border p-1.5 last:border-r-0",
+                    "flex min-h-[56px] flex-col gap-1 border-r border-b border-border p-1 sm:min-h-[110px] sm:p-1.5 last:border-r-0",
                     !isSameMonth(day, baseDate) && "bg-muted/40",
                   )}
                 >
-                  <span
-                    className={cn(
-                      "mb-0.5 flex size-6 items-center justify-center rounded-full text-xs font-medium",
-                      isToday(day) ? "bg-primary text-white" : "text-text-secondary",
-                    )}
+                  {/* モバイル: 件数のみのコンパクト表示。タップでその日の詳細(日表示)へ */}
+                  <Link
+                    href={`/schedule?view=day&date=${key}`}
+                    className="flex flex-1 flex-col items-center gap-1 pt-0.5 sm:hidden"
                   >
-                    {format(day, "d")}
-                  </span>
-                  <div className="flex flex-col gap-1">
+                    <span
+                      className={cn(
+                        "flex size-6 items-center justify-center rounded-full text-xs font-medium",
+                        isToday(day) ? "bg-primary text-white" : "text-text-secondary",
+                      )}
+                    >
+                      {format(day, "d")}
+                    </span>
+                    {allDayAppointments.length > 0 && (
+                      <span className="flex items-center gap-0.5">
+                        {Array.from({ length: dotCount }).map((_, i) => (
+                          <span key={i} className="size-1.5 rounded-full bg-primary" />
+                        ))}
+                        {allDayAppointments.length > dotCount && (
+                          <span className="text-[10px] leading-none text-text-muted">
+                            +{allDayAppointments.length - dotCount}
+                          </span>
+                        )}
+                      </span>
+                    )}
+                  </Link>
+
+                  {/* デスクトップ: 予約チップをそのまま表示 */}
+                  <div className="hidden sm:flex sm:flex-col sm:gap-1">
+                    <span
+                      className={cn(
+                        "mb-0.5 flex size-6 items-center justify-center rounded-full text-xs font-medium",
+                        isToday(day) ? "bg-primary text-white" : "text-text-secondary",
+                      )}
+                    >
+                      {format(day, "d")}
+                    </span>
                     {dayAppointments.map((a) => (
                       <AppointmentChip key={a.id} appointment={a} />
                     ))}
@@ -138,14 +169,51 @@ export default async function SchedulePage({
         </div>
       )}
 
+      {view === "week" && (
+        <div className="flex flex-col gap-3 md:hidden">
+          {eachDayOfInterval({ start: rangeStart, end: addDays(rangeEnd, -1) }).map((day) => {
+            const key = format(day, "yyyy-MM-dd");
+            const dayAppointments = byDay.get(key) ?? [];
+            return (
+              <div key={key} className="rounded-xl border border-border bg-surface p-3">
+                <div className="mb-2 flex items-center gap-2">
+                  <span
+                    className={cn(
+                      "flex size-6 items-center justify-center rounded-full text-xs font-medium",
+                      isToday(day) ? "bg-primary text-white" : "text-text-secondary",
+                    )}
+                  >
+                    {format(day, "d")}
+                  </span>
+                  <span className="text-sm font-medium text-text-primary">
+                    {WEEKDAY_LABELS[day.getDay()]}曜日
+                  </span>
+                </div>
+                {dayAppointments.length === 0 ? (
+                  <p className="pl-8 text-xs text-text-muted">予定なし</p>
+                ) : (
+                  <div className="flex flex-col gap-1.5">
+                    {dayAppointments.map((a) => (
+                      <AppointmentChip key={a.id} appointment={a} compact={false} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
       {(view === "week" || view === "day") && (
-        <ScheduleGridClient
-          view={view}
-          days={eachDayOfInterval({ start: rangeStart, end: addDays(rangeEnd, -1) })}
-          appointmentsByDay={byDay}
-          busyBlocksByDay={busyByDay}
-          customers={customerOptions}
-        />
+        <div className={view === "week" ? "hidden md:block" : undefined}>
+          <ScheduleGridClient
+            view={view}
+            days={eachDayOfInterval({ start: rangeStart, end: addDays(rangeEnd, -1) })}
+            appointmentsByDay={byDay}
+            busyBlocksByDay={busyByDay}
+            customers={customerOptions}
+          />
+        </div>
       )}
     </div>
   );
