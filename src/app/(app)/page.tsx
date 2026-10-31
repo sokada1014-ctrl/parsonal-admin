@@ -47,13 +47,13 @@ export default async function DashboardPage() {
       <PageHeader title="ダッシュボード" description="今日やるべきことをひと目で確認できます" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <KpiCard label="総顧客数" value={`${kpis.totalCustomers}名`} icon={Users} />
-        <KpiCard label="契約中顧客" value={`${kpis.activeCustomers}名`} icon={UserCheck} />
-        <KpiCard label="今月売上" value={formatCurrency(kpis.monthlyRevenue)} icon={JapaneseYen} />
-        <KpiCard label="今月セッション数" value={`${kpis.monthlySessionCount}件`} icon={ClipboardList} />
-        <KpiCard label="体験中" value={`${kpis.trialCount}名`} icon={Sparkles} />
-        <KpiCard label="今月の入会者数" value={`${kpis.newMembersThisMonth}名`} icon={UserPlus} />
-        <KpiCard label="今月の退会者数" value={`${kpis.leftThisMonth}名`} icon={UserMinus} />
+        <KpiCard label="総顧客数" value={`${kpis.totalCustomers}名`} icon={Users} tone="primary" />
+        <KpiCard label="契約中顧客" value={`${kpis.activeCustomers}名`} icon={UserCheck} tone="primary" />
+        <KpiCard label="今月売上" value={formatCurrency(kpis.monthlyRevenue)} icon={JapaneseYen} tone="success" />
+        <KpiCard label="今月セッション数" value={`${kpis.monthlySessionCount}件`} icon={ClipboardList} tone="primary" />
+        <KpiCard label="体験中" value={`${kpis.trialCount}名`} icon={Sparkles} tone="warning" />
+        <KpiCard label="今月の入会者数" value={`${kpis.newMembersThisMonth}名`} icon={UserPlus} tone="success" />
+        <KpiCard label="今月の退会者数" value={`${kpis.leftThisMonth}名`} icon={UserMinus} tone="danger" />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-5">

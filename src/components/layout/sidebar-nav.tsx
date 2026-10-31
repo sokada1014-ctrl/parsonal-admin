@@ -19,10 +19,10 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             href={item.href}
             onClick={onNavigate}
             className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+              "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-[background-color,color,box-shadow,transform] duration-200 ease-out",
               isActive
-                ? "bg-primary-light text-primary"
-                : "text-text-secondary hover:bg-muted hover:text-text-primary",
+                ? "bg-gradient-to-r from-primary to-primary-hover text-white shadow-[0_4px_14px_-4px_rgba(36,149,134,0.55)]"
+                : "text-text-secondary hover:bg-muted hover:text-text-primary active:scale-[0.98]",
             )}
           >
             <Icon className="size-[18px] shrink-0" strokeWidth={2} />

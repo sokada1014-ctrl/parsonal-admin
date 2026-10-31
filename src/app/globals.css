@@ -105,7 +105,7 @@
   --chart-4: #45a598;
   --chart-5: #249586;
 
-  --radius: 0.625rem;
+  --radius: 0.75rem;
 
   --sidebar: #ffffff;
   --sidebar-foreground: var(--text-primary);
@@ -123,8 +123,27 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 12% -10%, color-mix(in oklch, var(--primary) 9%, transparent), transparent 50%),
+      radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--primary) 6%, transparent), transparent 42%);
   }
   html {
     @apply font-sans;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in oklch, var(--text-muted) 70%, transparent) transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: color-mix(in oklch, var(--text-muted) 70%, transparent);
+    border-radius: 999px;
   }
 }
