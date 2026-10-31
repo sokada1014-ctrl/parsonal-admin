@@ -37,6 +37,12 @@ export function addDays(base: Date, days: number): Date {
   return d;
 }
 
+export function addMonths(base: Date, months: number): Date {
+  const d = new Date(base);
+  d.setMonth(d.getMonth() + months);
+  return d;
+}
+
 export function toDateStr(d: Date): string {
   return d.toISOString().slice(0, 10);
 }

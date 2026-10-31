@@ -1,5 +1,7 @@
-import { AlertTriangle } from "lucide-react";
+import Link from "next/link";
+import { AlertTriangle, Users } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LINK_UNDERLINE } from "@/lib/motion";
 import { formatDate, calcAge } from "@/lib/format";
 import type { CustomerFullProfile } from "@/lib/data-access";
 
@@ -13,7 +15,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
 }
 
 export function OverviewTab({ profile }: { profile: CustomerFullProfile }) {
-  const { customer, bodyMetrics } = profile;
+  const { customer, bodyMetrics, pairedCustomer } = profile;
   const latest = bodyMetrics[bodyMetrics.length - 1];
   const age = calcAge(customer.birthDate);
 
@@ -28,6 +30,7 @@ export function OverviewTab({ profile }: { profile: CustomerFullProfile }) {
           <InfoRow label="性別" value={customer.gender === "male" ? "男性" : customer.gender === "female" ? "女性" : "-"} />
           <InfoRow label="電話番号" value={customer.phone ?? "-"} />
           <InfoRow label="メール" value={customer.email ?? "-"} />
+          <InfoRow label="住所" value={customer.address ?? "-"} />
           <InfoRow label="登録日" value={formatDate(customer.createdAt)} />
         </CardContent>
       </Card>
@@ -66,6 +69,28 @@ export function OverviewTab({ profile }: { profile: CustomerFullProfile }) {
             </div>
           ) : (
             <p className="text-sm text-text-muted">特になし</p>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card className="shadow-none">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Users className="size-4 text-text-secondary" />
+            ペア参加
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {pairedCustomer ? (
+            <Link
+              href={`/customers/${pairedCustomer.id}`}
+              className="group inline-flex items-center gap-1 text-sm font-medium text-text-primary"
+            >
+              <span className={LINK_UNDERLINE}>{pairedCustomer.name}</span>
+              <span className="text-text-muted">さんと一緒に参加</span>
+            </Link>
+          ) : (
+            <p className="text-sm text-text-muted">ペア相手は設定されていません</p>
           )}
         </CardContent>
       </Card>

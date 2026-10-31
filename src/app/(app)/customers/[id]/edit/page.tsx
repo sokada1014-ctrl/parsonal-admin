@@ -8,14 +8,23 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageHeader } from "@/components/page-header";
-import { getCustomerById, getStaffList } from "@/lib/data-access";
-import { updateCustomerAction } from "@/lib/actions";
+import { getCustomerById, getCustomerListItems, getStaffList } from "@/lib/data-access";
+import { updateCustomerAction, updateCustomerPairAction } from "@/lib/actions";
 import { LINK_UNDERLINE } from "@/lib/motion";
+import { PairCustomerSelect } from "@/components/customers/pair-customer-select";
 
 export default async function EditCustomerPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [customer, staffList] = await Promise.all([getCustomerById(id), getStaffList()]);
+  const [customer, staffList, customerItems] = await Promise.all([
+    getCustomerById(id),
+    getStaffList(),
+    getCustomerListItems(),
+  ]);
   if (!customer) notFound();
+
+  const otherCustomers = customerItems
+    .map((i) => i.customer)
+    .filter((c) => c.id !== id && (c.status === "active" || c.status === "trial"));
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -70,6 +79,11 @@ export default async function EditCustomerPage({ params }: { params: Promise<{ i
                 <Input id="email" name="email" type="email" defaultValue={customer.email} />
               </div>
 
+              <div className="flex flex-col gap-1.5 sm:col-span-2">
+                <Label htmlFor="address">住所</Label>
+                <Input id="address" name="address" defaultValue={customer.address} placeholder="例: 東京都渋谷区〇〇1-2-3" />
+              </div>
+
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="primaryStaffId">
                   担当トレーナー <span className="text-danger">*</span>
@@ -95,11 +109,25 @@ export default async function EditCustomerPage({ params }: { params: Promise<{ i
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
+                    <SelectItem value="trial">体験中</SelectItem>
                     <SelectItem value="active">契約中</SelectItem>
                     <SelectItem value="paused">休会</SelectItem>
                     <SelectItem value="cancelled">解約</SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="flex flex-col gap-1.5 sm:col-span-2">
+                <Label>ペア参加の相手</Label>
+                <PairCustomerSelect
+                  customerId={customer.id}
+                  currentPairedId={customer.pairedCustomerId}
+                  candidates={otherCustomers.map((c) => ({ id: c.id, name: c.name }))}
+                  action={updateCustomerPairAction}
+                />
+                <p className="text-xs text-text-muted">
+                  一緒にセッションを受ける顧客を選ぶと、顧客詳細から相手がわかるようになり、予約時に同時登録できます。
+                </p>
               </div>
 
               <div className="flex flex-col gap-1.5 sm:col-span-2">

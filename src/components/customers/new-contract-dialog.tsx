@@ -87,29 +87,56 @@ export function NewContractDialog({ customerId, planTemplates }: { customerId: s
             )}
 
             {effectiveType === "monthly" && (
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="monthlyFee">月額料金(円)</Label>
-                <Input
-                  id="monthlyFee"
-                  name="monthlyFee"
-                  type="number"
-                  defaultValue={selectedTemplate?.monthlyFee}
-                  placeholder="32000"
-                />
-              </div>
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="monthlyFee">月額料金(円)</Label>
+                  <Input
+                    id="monthlyFee"
+                    name="monthlyFee"
+                    type="number"
+                    defaultValue={selectedTemplate?.monthlyFee}
+                    placeholder="32000"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="monthlySessionCount">月間基本回数</Label>
+                  <Input
+                    id="monthlySessionCount"
+                    name="monthlySessionCount"
+                    type="number"
+                    defaultValue={selectedTemplate?.monthlySessionCount}
+                    placeholder="4"
+                  />
+                  <p className="text-xs text-text-muted">
+                    自動更新され、余った回数は入金確認時に翌月へ繰り越されます。
+                  </p>
+                </div>
+              </>
             )}
 
             {effectiveType === "ticket" && (
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="ticketCount">購入回数</Label>
-                <Input
-                  id="ticketCount"
-                  name="ticketCount"
-                  type="number"
-                  defaultValue={selectedTemplate?.ticketCount}
-                  placeholder="10"
-                />
-              </div>
+              <>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="ticketCount">購入回数</Label>
+                  <Input
+                    id="ticketCount"
+                    name="ticketCount"
+                    type="number"
+                    defaultValue={selectedTemplate?.ticketCount}
+                    placeholder="10"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="validityMonths">有効期間(ヶ月)</Label>
+                  <Input
+                    id="validityMonths"
+                    name="validityMonths"
+                    type="number"
+                    defaultValue={selectedTemplate?.validityMonths}
+                    placeholder="2"
+                  />
+                </div>
+              </>
             )}
 
             <div className="grid grid-cols-2 gap-4">

@@ -140,6 +140,7 @@ export async function getCustomerById(id: string): Promise<Customer | undefined>
 export interface CustomerFullProfile {
   customer: Customer;
   staffName?: string;
+  pairedCustomer?: { id: string; name: string };
   contracts: Contract[];
   tickets: Ticket[];
   appointments: Appointment[];
@@ -156,9 +157,14 @@ export async function getCustomerFullProfile(id: string): Promise<CustomerFullPr
   const customer = customers.find((c) => c.id === id);
   if (!customer) return undefined;
 
+  const pairedCustomer = customer.pairedCustomerId
+    ? customers.find((c) => c.id === customer.pairedCustomerId)
+    : undefined;
+
   return {
     customer,
     staffName: staff.find((s) => s.id === customer.primaryStaffId)?.name,
+    pairedCustomer: pairedCustomer ? { id: pairedCustomer.id, name: pairedCustomer.name } : undefined,
     contracts: contracts.filter((c) => c.customerId === id),
     tickets: tickets.filter((t) => t.customerId === id),
     appointments: appointments
@@ -231,6 +237,9 @@ export interface DashboardKpis {
   activeCustomers: number;
   monthlyRevenue: number;
   monthlySessionCount: number;
+  trialCount: number; // 体験中(現時点)の人数
+  newMembersThisMonth: number; // 今月の入会者数(体験 → 契約中)
+  leftThisMonth: number; // 今月の退会者数
 }
 
 export async function getDashboardKpis(): Promise<DashboardKpis> {
@@ -243,11 +252,20 @@ export async function getDashboardKpis(): Promise<DashboardKpis> {
 
   const monthlySessionCount = sessions.filter((s) => new Date(s.date) >= monthStart).length;
 
+  const trialCount = customers.filter((c) => c.status === "trial").length;
+  const newMembersThisMonth = customers.filter((c) => c.joinedAt && new Date(c.joinedAt) >= monthStart).length;
+  const leftThisMonth = contracts.filter(
+    (c) => c.status === "cancelled" && c.endDate && new Date(c.endDate) >= monthStart,
+  ).length;
+
   return delay({
     totalCustomers: customers.length,
     activeCustomers: customers.filter((c) => c.status === "active").length,
     monthlyRevenue,
     monthlySessionCount,
+    trialCount,
+    newMembersThisMonth,
+    leftThisMonth,
   });
 }
 

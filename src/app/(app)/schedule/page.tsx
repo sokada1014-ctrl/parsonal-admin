@@ -77,7 +77,11 @@ export default async function SchedulePage({
   ]);
   const byDay = groupByDay(appointments);
   const busyByDay = groupByDay<GoogleBusyBlock>(busyBlocks);
-  const customerOptions = customerItems.map((c) => ({ id: c.customer.id, name: c.customer.name }));
+  const customerOptions = customerItems.map((c) => ({
+    id: c.customer.id,
+    name: c.customer.name,
+    pairedCustomerId: c.customer.pairedCustomerId,
+  }));
 
   return (
     <div>

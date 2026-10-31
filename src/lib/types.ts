@@ -30,11 +30,14 @@ export interface PlanTemplate {
   planType: PlanType;
   monthlyFee?: number;
   ticketCount?: number; // planType が ticket の場合の購入回数の初期値
+  validityMonths?: number; // planType が ticket の場合の有効期間(月数)
+  monthlySessionCount?: number; // planType が monthly(サブスク)の場合の月間基本回数
 }
 
 export type ContractStatus = "active" | "paused" | "cancelled" | "expired";
 
-export type CustomerStatus = "active" | "paused" | "cancelled";
+// trial = 体験(入会前)。active = 契約中(入会済み)。
+export type CustomerStatus = "trial" | "active" | "paused" | "cancelled";
 
 export interface Customer {
   id: UUID;
@@ -46,12 +49,15 @@ export interface Customer {
   gender?: "male" | "female" | "other";
   phone?: string;
   email?: string;
+  address?: string;
   primaryStaffId: UUID;
   status: CustomerStatus;
   goal?: string;
   cautions?: string; // 注意事項(既往歴・怪我など)
   memo?: string;
+  pairedCustomerId?: UUID; // ペア参加の相手(双方向で設定する)
   createdAt: string;
+  joinedAt?: string; // 体験 → 入会(active)に切り替わった日。入会者数の集計に使う
 }
 
 export interface CustomerNote {
@@ -84,6 +90,7 @@ export interface Contract {
   endDate?: string;
   renewalDate?: string;
   monthlyFee?: number;
+  monthlySessionCount?: number; // サブスク(monthly)の月間基本回数。設定されていれば自動更新+繰越の対象
   status: ContractStatus;
 }
 
@@ -118,6 +125,7 @@ export interface Appointment {
   menu?: string;
   status: AppointmentStatus;
   note?: string;
+  pairedAppointmentId?: UUID; // ペアで同時予約した場合、もう片方の予約を指す
 }
 
 export interface SessionExercise {

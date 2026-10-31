@@ -18,7 +18,7 @@ import type {
   Staff,
   Ticket,
 } from "@/lib/types";
-import { addDays, createRng, pick, pickWeighted, randFloat, randInt, toDateStr, toISO } from "./seed";
+import { addDays, addMonths, createRng, pick, pickWeighted, randFloat, randInt, toDateStr, toISO } from "./seed";
 
 export const ORG_ID = "org-1";
 
@@ -64,11 +64,15 @@ export const menuItems: MenuItem[] = [
 // 契約管理(マスタ = プランのひな形)。顧客の契約作成時に選択、または自由記述できる。
 // ---------------------------------------------------------------------------
 export const planTemplates: PlanTemplate[] = [
-  { id: "plan-1", organizationId: ORG_ID, name: "スタンダード月4回プラン", planType: "monthly", monthlyFee: 32000 },
-  { id: "plan-2", organizationId: ORG_ID, name: "プレミアム月8回プラン", planType: "monthly", monthlyFee: 58000 },
-  { id: "plan-3", organizationId: ORG_ID, name: "ピラティス月2回プラン", planType: "monthly", monthlyFee: 18000 },
-  { id: "plan-4", organizationId: ORG_ID, name: "回数券10回", planType: "ticket", ticketCount: 10 },
-  { id: "plan-5", organizationId: ORG_ID, name: "回数券5回", planType: "ticket", ticketCount: 5 },
+  // サブスク(月謝制)。毎月自動更新し、使わなかった回数は入金確認時に翌月へ繰り越す。
+  { id: "plan-1", organizationId: ORG_ID, name: "サブスク月4回", planType: "monthly", monthlyFee: 32000, monthlySessionCount: 4 },
+  { id: "plan-2", organizationId: ORG_ID, name: "サブスク月6回", planType: "monthly", monthlyFee: 45000, monthlySessionCount: 6 },
+  { id: "plan-3", organizationId: ORG_ID, name: "サブスク月8回", planType: "monthly", monthlyFee: 58000, monthlySessionCount: 8 },
+  // 回数券。有効期間内に使い切る形で、自動更新はしない。
+  { id: "plan-4", organizationId: ORG_ID, name: "単発(2ヶ月)", planType: "ticket", ticketCount: 1, validityMonths: 2 },
+  { id: "plan-5", organizationId: ORG_ID, name: "5回回数券(2ヶ月)", planType: "ticket", ticketCount: 5, validityMonths: 2 },
+  { id: "plan-6", organizationId: ORG_ID, name: "10回回数券(半年)", planType: "ticket", ticketCount: 10, validityMonths: 6 },
+  { id: "plan-7", organizationId: ORG_ID, name: "20回回数券(1年)", planType: "ticket", ticketCount: 20, validityMonths: 12 },
 ];
 
 // ---------------------------------------------------------------------------
@@ -86,6 +90,10 @@ const goals = [
   "ダイエット(-5kg)", "姿勢改善", "腰痛改善", "大会に向けた減量", "体力向上", "産後の体型戻し", "健康維持", "筋力アップ",
 ];
 const cautionsPool = [undefined, undefined, undefined, "膝に既往歴あり", "腰痛持ち、高重量注意", "妊娠中(安定期)", "血圧やや高め"];
+const addressAreas = [
+  "東京都渋谷区", "東京都世田谷区", "東京都港区", "東京都新宿区", "東京都中野区", "東京都杉並区",
+  "神奈川県横浜市", "神奈川県川崎市", "埼玉県さいたま市", "千葉県千葉市", "大阪府大阪市",
+];
 
 export const customers: Customer[] = [];
 const customerCount = 26;
@@ -95,13 +103,25 @@ for (let i = 0; i < customerCount; i++) {
   const family = familyNames[i % familyNames.length];
   const given = gender === "male" ? pick(rng, givenNamesMale) : pick(rng, givenNamesFemale);
   const status: CustomerStatus = pickWeighted(rng, [
-    ["active", 78],
+    ["trial", 12],
+    ["active", 66],
     ["paused", 12],
     ["cancelled", 10],
   ]);
   const age = randInt(rng, 22, 62);
   const birthYear = new Date().getFullYear() - age;
-  const createdDaysAgo = randInt(rng, 20, 720);
+  // 体験中の顧客は「最近」申し込んだ想定にする(体験からしばらく経っているのに体験のまま、は不自然なため)
+  const createdDaysAgo = status === "trial" ? randInt(rng, 1, 25) : randInt(rng, 20, 720);
+  const createdAt = addDays(today, -createdDaysAgo);
+
+  // 入会日(体験→入会の切り替わり日)。一部は「今月入会」になるよう直近の日付を強制する。
+  const forceJoinedThisMonth = status === "active" && i % 10 === 0;
+  const joinedAt =
+    status === "active"
+      ? forceJoinedThisMonth
+        ? addDays(today, -randInt(rng, 1, 25))
+        : createdAt
+      : undefined;
 
   customers.push({
     id: `cust-${i + 1}`,
@@ -112,13 +132,26 @@ for (let i = 0; i < customerCount; i++) {
     gender,
     phone: `090-${randInt(rng, 1000, 9999)}-${randInt(rng, 1000, 9999)}`,
     email: `customer${i + 1}@example.com`,
+    address: `${pick(rng, addressAreas)}${randInt(rng, 1, 8)}-${randInt(rng, 1, 20)}-${randInt(rng, 1, 15)}`,
     primaryStaffId: pick(rng, staffIds),
     status,
     goal: pick(rng, goals),
     cautions: pick(rng, cautionsPool),
     memo: undefined,
-    createdAt: toISO(addDays(today, -createdDaysAgo)),
+    createdAt: toISO(createdAt),
+    joinedAt: joinedAt ? toISO(joinedAt) : undefined,
   });
+}
+
+// ペア参加の紐づけ(デモ用に数組だけ設定)。双方向に設定する。
+const pairableCandidates = customers.filter((c) => c.status === "active" || c.status === "trial");
+for (let p = 0; p + 1 < pairableCandidates.length && p < 6; p += 7) {
+  const a = pairableCandidates[p];
+  const b = pairableCandidates[p + 1];
+  if (a && b && !a.pairedCustomerId && !b.pairedCustomerId) {
+    a.pairedCustomerId = b.id;
+    b.pairedCustomerId = a.id;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -128,6 +161,9 @@ export const contracts: Contract[] = [];
 export const tickets: Ticket[] = [];
 
 customers.forEach((customer, i) => {
+  // 体験中の顧客はまだ契約していない
+  if (customer.status === "trial") return;
+
   const plan = pick(rng, planTemplates);
   const startedDaysAgo = randInt(rng, 30, 500);
   const startDate = addDays(today, -startedDaysAgo);
@@ -136,13 +172,13 @@ customers.forEach((customer, i) => {
   else if (customer.status === "paused") contractStatus = "paused";
   else contractStatus = "active";
 
-  // 更新30日前アラートを確実に何件か発生させる
+  // 更新30日前アラートを確実に何件か発生させる(サブスクは自動更新だが、次回請求日の目安として表示する)
   const forceRenewalSoon = i % 6 === 0 && contractStatus === "active";
   const renewalDate =
     plan.planType === "monthly"
       ? forceRenewalSoon
         ? addDays(today, randInt(rng, 3, 28))
-        : addDays(today, randInt(rng, 5, 300))
+        : addDays(today, randInt(rng, 5, 30))
       : undefined;
 
   const contract: Contract = {
@@ -155,13 +191,14 @@ customers.forEach((customer, i) => {
     endDate: contractStatus === "cancelled" ? toDateStr(addDays(today, -randInt(rng, 1, 60))) : undefined,
     renewalDate: renewalDate ? toDateStr(renewalDate) : undefined,
     monthlyFee: plan.planType === "monthly" ? plan.monthlyFee : undefined,
+    monthlySessionCount: plan.planType === "monthly" ? plan.monthlySessionCount : undefined,
     status: contractStatus,
   };
   contracts.push(contract);
 
   if (plan.planType === "ticket" && contractStatus !== "cancelled") {
     // 実際の使用回数はこの時点では未確定(セッション生成後に確定させる)。
-    // ここでは購入枚数と購入日だけ決めておく。
+    // ここでは購入枚数・購入日・有効期限(プランの有効期間から自動計算)だけ決めておく。
     tickets.push({
       id: `ticket-${i + 1}`,
       organizationId: ORG_ID,
@@ -171,7 +208,25 @@ customers.forEach((customer, i) => {
       purchasedCount: plan.ticketCount ?? 10,
       usedCount: 0,
       purchasedAt: toDateStr(startDate),
-      expiresAt: toDateStr(addDays(startDate, 180)),
+      expiresAt: toDateStr(addMonths(startDate, plan.validityMonths ?? 2)),
+    });
+  }
+
+  if (plan.planType === "monthly" && plan.monthlySessionCount && contractStatus !== "cancelled") {
+    // サブスクは「残り回数」を回数券と同じ仕組みで管理する(自動更新のたびに monthlySessionCount が
+    // 繰り越し分に加算されるイメージ)。seed時点では軽い繰越(1〜2ヶ月分)だけ積んでおき、
+    // 残りは後続のセッション生成(月間回数に応じた実績)で自然に消化させる。
+    const carryoverMonths = randInt(rng, 1, 2);
+    tickets.push({
+      id: `ticket-${i + 1}`,
+      organizationId: ORG_ID,
+      customerId: customer.id,
+      contractId: contract.id,
+      name: plan.name,
+      purchasedCount: plan.monthlySessionCount * carryoverMonths,
+      usedCount: 0,
+      purchasedAt: toDateStr(startDate),
+      expiresAt: undefined,
     });
   }
 });
@@ -192,16 +247,33 @@ customers.forEach((customer, i) => {
   if (customer.status === "cancelled") return;
 
   const staffId = customer.primaryStaffId;
+  const customerContract = contracts.find((c) => c.customerId === customer.id);
+  const isSubscriber = customerContract?.planType === "monthly" && customerContract.monthlySessionCount;
 
-  // 過去の来店履歴(完了済み予約 + セッション記録)
-  const pastCount = customer.status === "paused" ? randInt(rng, 1, 3) : randInt(rng, 2, 9);
-  // 最終来店30日以上アラートを何件か確実に発生させる
-  const forceInactive = i % 7 === 0;
-  const lastVisitDaysAgo = forceInactive ? randInt(rng, 32, 90) : randInt(rng, 1, 20);
+  // 過去の来店履歴(完了済み予約 + セッション記録)。体験中は体験セッション1回のみ。
+  // サブスクは月間基本回数に応じて、ちゃんと通っている実績に見合う件数を生成する(残り回数が不自然に
+  // 積み上がらないようにするため)。
+  const pastCount =
+    customer.status === "trial"
+      ? 1
+      : customer.status === "paused"
+        ? randInt(rng, 1, 3)
+        : isSubscriber
+          ? Math.max(1, customerContract.monthlySessionCount! + randInt(rng, -2, 3))
+          : randInt(rng, 2, 9);
+  // 最終来店30日以上アラートを何件か確実に発生させる(体験中の顧客は対象外)
+  const forceInactive = customer.status !== "trial" && i % 7 === 0;
+  const customerCreatedDaysAgo = Math.round((today.getTime() - new Date(customer.createdAt).getTime()) / 86400000);
+  const lastVisitDaysAgo =
+    customer.status === "trial"
+      ? randInt(rng, 0, Math.max(0, Math.min(7, customerCreatedDaysAgo)))
+      : forceInactive
+        ? randInt(rng, 32, 90)
+        : randInt(rng, 1, 20);
 
   const visitOffsets: number[] = [lastVisitDaysAgo];
   for (let v = 1; v < pastCount; v++) {
-    visitOffsets.push(lastVisitDaysAgo + v * randInt(rng, 5, 14));
+    visitOffsets.push(lastVisitDaysAgo + v * (isSubscriber ? randInt(rng, 2, 5) : randInt(rng, 5, 14)));
   }
 
   // セッション記録未入力アラートを何件か確実に発生させる
@@ -418,13 +490,16 @@ export function computeAlerts(): AlertNotification[] {
     const customerTickets = tickets.filter((t) => t.customerId === customer.id);
     for (const ticket of customerTickets) {
       const remaining = ticket.purchasedCount - ticket.usedCount;
+      const isSubscriptionBalance = contracts.find((c) => c.id === ticket.contractId)?.planType === "monthly";
       if (remaining <= 2 && remaining >= 0) {
         alerts.push({
           id: `alert-${seq++}`,
           organizationId: ORG_ID,
           customerId: customer.id,
           type: "ticket_low",
-          message: `回数券の残りが${remaining}回です`,
+          message: isSubscriptionBalance
+            ? `今月の残りセッション数が${remaining}回です`
+            : `回数券の残りが${remaining}回です`,
           severity: remaining === 0 ? "danger" : "warning",
           createdAt: toISO(today),
         });

@@ -66,6 +66,11 @@ export default async function NewCustomerPage() {
               </div>
 
               <div className="flex flex-col gap-1.5 sm:col-span-2">
+                <Label htmlFor="address">住所</Label>
+                <Input id="address" name="address" placeholder="例: 東京都渋谷区〇〇1-2-3" />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
                 <Label htmlFor="primaryStaffId">
                   担当トレーナー <span className="text-danger">*</span>
                 </Label>
@@ -79,6 +84,19 @@ export default async function NewCustomerPage() {
                         {s.name}
                       </SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="status">ステータス</Label>
+                <Select name="status" defaultValue="trial">
+                  <SelectTrigger id="status" className="w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="trial">体験中</SelectItem>
+                    <SelectItem value="active">契約中</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

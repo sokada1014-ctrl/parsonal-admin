@@ -25,6 +25,8 @@ export default async function PlansPage() {
               <TableHead>プラン名</TableHead>
               <TableHead>タイプ</TableHead>
               <TableHead>料金・回数</TableHead>
+              <TableHead>月間回数/有効期間</TableHead>
+              <TableHead>自動更新</TableHead>
               <TableHead>利用中の顧客数</TableHead>
               <TableHead className="w-12" />
             </TableRow>
@@ -41,6 +43,16 @@ export default async function PlansPage() {
                       : "-"
                     : `${template.ticketCount ?? "-"}回`}
                 </TableCell>
+                <TableCell>
+                  {template.planType === "monthly"
+                    ? template.monthlySessionCount
+                      ? `月${template.monthlySessionCount}回`
+                      : "-"
+                    : template.validityMonths
+                      ? `${template.validityMonths}ヶ月`
+                      : "-"}
+                </TableCell>
+                <TableCell>{template.planType === "monthly" ? "あり" : "なし(使い切り)"}</TableCell>
                 <TableCell>{customerCount}名</TableCell>
                 <TableCell>
                   <form action={deletePlanTemplateAction.bind(null, template.id)}>

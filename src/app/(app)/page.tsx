@@ -1,5 +1,15 @@
 import Link from "next/link";
-import { CalendarClock, ChevronRight, ClipboardList, JapaneseYen, Users, UserCheck } from "lucide-react";
+import {
+  CalendarClock,
+  ChevronRight,
+  ClipboardList,
+  JapaneseYen,
+  Sparkles,
+  UserCheck,
+  UserMinus,
+  UserPlus,
+  Users,
+} from "lucide-react";
 import { PageHeader } from "@/components/page-header";
 import { KpiCard } from "@/components/dashboard/kpi-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -41,6 +51,9 @@ export default async function DashboardPage() {
         <KpiCard label="契約中顧客" value={`${kpis.activeCustomers}名`} icon={UserCheck} />
         <KpiCard label="今月売上" value={formatCurrency(kpis.monthlyRevenue)} icon={JapaneseYen} />
         <KpiCard label="今月セッション数" value={`${kpis.monthlySessionCount}件`} icon={ClipboardList} />
+        <KpiCard label="体験中" value={`${kpis.trialCount}名`} icon={Sparkles} />
+        <KpiCard label="今月の入会者数" value={`${kpis.newMembersThisMonth}名`} icon={UserPlus} />
+        <KpiCard label="今月の退会者数" value={`${kpis.leftThisMonth}名`} icon={UserMinus} />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-5">

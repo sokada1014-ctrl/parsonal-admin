@@ -25,7 +25,14 @@ export function ContractsTab({ profile, planTemplates }: { profile: CustomerFull
       {contracts.map((contract) => (
         <Card key={contract.id} className={cn("shadow-none", CARD_LIFT)}>
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">{contract.planName}</CardTitle>
+            <CardTitle className="flex items-center gap-2 text-base">
+              {contract.planName}
+              {contract.planType === "monthly" && contract.monthlySessionCount && (
+                <span className="rounded-full bg-primary-light px-2 py-0.5 text-xs font-medium text-primary">
+                  自動更新
+                </span>
+              )}
+            </CardTitle>
             <ContractStatusBadge status={contract.status} />
           </CardHeader>
           <CardContent className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm sm:grid-cols-4">
@@ -38,7 +45,7 @@ export function ContractsTab({ profile, planTemplates }: { profile: CustomerFull
               <p className="font-medium text-text-primary">{formatDate(contract.endDate)}</p>
             </div>
             <div>
-              <p className="text-text-secondary">更新日</p>
+              <p className="text-text-secondary">次回更新予定日</p>
               <p className="font-medium text-text-primary">{formatDate(contract.renewalDate)}</p>
             </div>
             <div>
@@ -47,6 +54,12 @@ export function ContractsTab({ profile, planTemplates }: { profile: CustomerFull
                 {contract.monthlyFee !== undefined ? formatCurrency(contract.monthlyFee) : "-"}
               </p>
             </div>
+            {contract.monthlySessionCount !== undefined && (
+              <div>
+                <p className="text-text-secondary">月間基本回数</p>
+                <p className="font-medium text-text-primary">{contract.monthlySessionCount}回</p>
+              </div>
+            )}
           </CardContent>
         </Card>
       ))}
@@ -71,7 +84,7 @@ export function ContractsTab({ profile, planTemplates }: { profile: CustomerFull
               <Progress value={pct} />
               <div className="mt-3 flex justify-between text-xs text-text-secondary">
                 <span>購入日: {formatDate(ticket.purchasedAt)}</span>
-                <span>有効期限: {formatDate(ticket.expiresAt)}</span>
+                <span>{ticket.expiresAt ? `有効期限: ${formatDate(ticket.expiresAt)}` : "自動更新(繰越あり)"}</span>
               </div>
             </CardContent>
           </Card>

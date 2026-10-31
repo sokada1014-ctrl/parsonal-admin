@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MenuComboInput } from "@/components/menu-combo-input";
 import { createAppointmentAction } from "@/lib/actions";
@@ -14,6 +15,7 @@ import { createAppointmentAction } from "@/lib/actions";
 interface Option {
   id: string;
   name: string;
+  pairedCustomerId?: string;
 }
 
 export function NewAppointmentDialog({
@@ -28,10 +30,18 @@ export function NewAppointmentDialog({
   defaultDate: string;
 }) {
   const [open, setOpen] = useState(false);
+  const [customerId, setCustomerId] = useState<string>("");
+  const [bookPair, setBookPair] = useState(true);
+
+  const selectedCustomer = customers.find((c) => c.id === customerId);
+  const pairedCustomer = selectedCustomer?.pairedCustomerId
+    ? customers.find((c) => c.id === selectedCustomer.pairedCustomerId)
+    : undefined;
 
   async function handleSubmit(formData: FormData) {
     await createAppointmentAction(formData);
     setOpen(false);
+    setCustomerId("");
   }
 
   return (
@@ -51,7 +61,7 @@ export function NewAppointmentDialog({
               <Label htmlFor="ap-customer">
                 顧客 <span className="text-danger">*</span>
               </Label>
-              <Select name="customerId" required>
+              <Select name="customerId" required value={customerId} onValueChange={setCustomerId}>
                 <SelectTrigger id="ap-customer" className="w-full">
                   <SelectValue placeholder="選択してください" />
                 </SelectTrigger>
@@ -64,6 +74,18 @@ export function NewAppointmentDialog({
                 </SelectContent>
               </Select>
             </div>
+
+            {pairedCustomer && (
+              <label className="flex items-center gap-2 rounded-lg bg-primary-light px-3 py-2.5 text-sm text-primary">
+                <Checkbox
+                  checked={bookPair}
+                  onCheckedChange={(v) => setBookPair(v === true)}
+                  name="pairCustomerId"
+                  value={pairedCustomer.id}
+                />
+                ペア相手の{pairedCustomer.name}さんも同時刻で同時予約する
+              </label>
+            )}
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="ap-staff">

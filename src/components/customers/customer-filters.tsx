@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 const statusOptions = [
   { value: "all", label: "すべて" },
+  { value: "trial", label: "体験中" },
   { value: "active", label: "契約中" },
   { value: "paused", label: "休会" },
   { value: "cancelled", label: "解約" },

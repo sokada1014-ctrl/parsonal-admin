@@ -37,6 +37,7 @@ function BaseBadge({ tone, label }: { tone: Tone; label: string }) {
 }
 
 const customerStatusMap: Record<CustomerStatus, { label: string; tone: Tone }> = {
+  trial: { label: "体験中", tone: "warning" },
   active: { label: "契約中", tone: "primary" },
   paused: { label: "休会", tone: "warning" },
   cancelled: { label: "解約", tone: "muted" },
