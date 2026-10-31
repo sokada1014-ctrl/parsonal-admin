@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { SidebarNav } from "./sidebar-nav";
+import { ThemeToggle } from "./theme-toggle";
 import { SeverityBadge } from "@/components/status-badge";
 
 export interface TopbarAlert {
@@ -42,6 +43,8 @@ export function Topbar({ alerts, staffName }: { alerts: TopbarAlert[]; staffName
       </Sheet>
 
       <div className="flex-1" />
+
+      <ThemeToggle />
 
       <DropdownMenu>
         <DropdownMenuTrigger asChild>

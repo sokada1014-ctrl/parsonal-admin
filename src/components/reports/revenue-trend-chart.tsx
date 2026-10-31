@@ -1,11 +1,12 @@
 "use client";
 
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { CHART_COLORS } from "@/lib/chart-colors";
+import { useChartColors } from "@/lib/chart-colors";
 import { formatCurrency } from "@/lib/format";
 import type { MonthlyRevenuePoint } from "@/lib/data-access";
 
 export function RevenueTrendChart({ data }: { data: MonthlyRevenuePoint[] }) {
+  const CHART_COLORS = useChartColors();
   const values = data.map((d) => d.revenue);
   const min = Math.min(...values, 0);
   const max = Math.max(...values, 1);
@@ -40,7 +41,7 @@ export function RevenueTrendChart({ data }: { data: MonthlyRevenuePoint[] }) {
               border: `1px solid ${CHART_COLORS.border}`,
               backgroundColor: CHART_COLORS.surface,
               color: CHART_COLORS.textPrimary,
-              boxShadow: "0 8px 24px -8px rgba(0,0,0,0.5)",
+              boxShadow: CHART_COLORS.tooltipShadow,
             }}
             labelStyle={{ color: CHART_COLORS.textPrimary }}
           />

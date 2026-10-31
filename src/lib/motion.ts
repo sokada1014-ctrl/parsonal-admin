@@ -7,10 +7,10 @@
 // アニメーションさせるCSSプロパティは transform / opacity / box-shadow に限定する。
 
 // カード(一覧・グリッド表示されるもの)。Lift効果のみ。Scale/Tiltは併用しない。
-// ダーク基調UIのため、shadow-lgではなくPrimaryカラーのグローで浮遊感を出す。
+// shadow-lgの代わりにPrimaryカラーのグローで浮遊感を出す(ライト/ダーク両テーマで自動追従)。
 export const CARD_LIFT =
   "transition-[transform,box-shadow] duration-200 ease-out hover:-translate-y-1 " +
-  "hover:shadow-[0_16px_40px_-14px_rgba(36,149,134,0.5)]";
+  "hover:shadow-[0_16px_40px_-14px_rgb(from_var(--primary)_r_g_b_/_0.35)]";
 
 // テキストリンク。Underline reveal のみ(左から伸びる下線)。
 // widthではなく scaleX(transform) で実装し、GPUに乗る軽量なアニメーションにする。

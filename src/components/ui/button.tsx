@@ -6,8 +6,10 @@ import { cn } from "@/lib/utils"
 
 // ボタンのホバーは Glow(box-shadow)、押下は scale(0.97) に統一する。
 // アニメーションは transform / box-shadow のみ(width/height/colorのトランジションは使わない)。
-const GLOW_PRIMARY = "hover:shadow-[0_0_0_1px_rgba(36,149,134,0.35),0_8px_24px_-6px_rgba(36,149,134,0.65)]";
-const GLOW_DESTRUCTIVE = "hover:shadow-[0_0_0_1px_rgba(226,114,107,0.3),0_8px_24px_-6px_rgba(226,114,107,0.6)]";
+const GLOW_PRIMARY =
+  "hover:shadow-[0_0_0_1px_rgb(from_var(--primary)_r_g_b_/_0.3),0_8px_22px_-6px_rgb(from_var(--primary)_r_g_b_/_0.55)]";
+const GLOW_DESTRUCTIVE =
+  "hover:shadow-[0_0_0_1px_rgb(from_var(--danger)_r_g_b_/_0.25),0_8px_22px_-6px_rgb(from_var(--danger)_r_g_b_/_0.5)]";
 
 const buttonVariants = cva(
   "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[transform,box-shadow] duration-200 ease-out outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",

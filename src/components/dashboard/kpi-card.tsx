@@ -6,10 +6,14 @@ import { cn } from "@/lib/utils";
 type Tone = "primary" | "success" | "warning" | "danger";
 
 const toneChipClasses: Record<Tone, string> = {
-  primary: "bg-gradient-to-br from-primary/25 to-primary/5 text-primary shadow-[0_0_18px_-4px_rgba(36,149,134,0.7)]",
-  success: "bg-gradient-to-br from-success/25 to-success/5 text-success shadow-[0_0_18px_-4px_rgba(79,207,152,0.6)]",
-  warning: "bg-gradient-to-br from-warning/25 to-warning/5 text-warning shadow-[0_0_18px_-4px_rgba(227,168,79,0.6)]",
-  danger: "bg-gradient-to-br from-danger/25 to-danger/5 text-danger shadow-[0_0_18px_-4px_rgba(226,114,107,0.6)]",
+  primary:
+    "bg-gradient-to-br from-primary/25 to-primary/5 text-primary shadow-[0_4px_16px_-4px_rgb(from_var(--primary)_r_g_b_/_0.5)]",
+  success:
+    "bg-gradient-to-br from-success/25 to-success/5 text-success shadow-[0_4px_16px_-4px_rgb(from_var(--success)_r_g_b_/_0.45)]",
+  warning:
+    "bg-gradient-to-br from-warning/25 to-warning/5 text-warning shadow-[0_4px_16px_-4px_rgb(from_var(--warning)_r_g_b_/_0.45)]",
+  danger:
+    "bg-gradient-to-br from-danger/25 to-danger/5 text-danger shadow-[0_4px_16px_-4px_rgb(from_var(--danger)_r_g_b_/_0.45)]",
 };
 
 export function KpiCard({

@@ -1,7 +1,7 @@
 "use client";
 
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { CHART_COLORS } from "@/lib/chart-colors";
+import { useChartColors } from "@/lib/chart-colors";
 import { formatDateShort } from "@/lib/format";
 
 export function BodyMetricChart({
@@ -11,6 +11,7 @@ export function BodyMetricChart({
   data: { measuredAt: string; value: number | undefined }[];
   unit: string;
 }) {
+  const CHART_COLORS = useChartColors();
   const points = data.filter((d) => d.value !== undefined) as { measuredAt: string; value: number }[];
 
   if (points.length < 2) {
@@ -56,7 +57,7 @@ export function BodyMetricChart({
               border: `1px solid ${CHART_COLORS.border}`,
               backgroundColor: CHART_COLORS.surface,
               color: CHART_COLORS.textPrimary,
-              boxShadow: "0 8px 24px -8px rgba(0,0,0,0.5)",
+              boxShadow: CHART_COLORS.tooltipShadow,
             }}
             labelStyle={{ color: CHART_COLORS.textPrimary }}
           />

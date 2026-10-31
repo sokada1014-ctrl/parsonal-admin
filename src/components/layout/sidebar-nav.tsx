@@ -21,7 +21,7 @@ export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
             className={cn(
               "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-[background-color,color,box-shadow,transform] duration-200 ease-out",
               isActive
-                ? "bg-gradient-to-r from-primary to-primary-hover text-white shadow-[0_0_0_1px_rgba(36,149,134,0.4),0_0_24px_-4px_rgba(36,149,134,0.8)]"
+                ? "bg-gradient-to-r from-primary to-primary-hover text-white shadow-[0_0_0_1px_rgb(from_var(--primary)_r_g_b_/_0.3),0_8px_22px_-5px_rgb(from_var(--primary)_r_g_b_/_0.6)]"
                 : "text-text-secondary hover:bg-muted hover:text-text-primary active:scale-[0.98]",
             )}
           >

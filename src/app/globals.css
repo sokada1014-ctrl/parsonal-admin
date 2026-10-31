@@ -61,7 +61,65 @@
 }
 
 :root {
-  /* VALNOVA (https://valnova.jp/) --main-color を Primary Green として採用(ダーク基調化でも値は不変) */
+  /* VALNOVA (https://valnova.jp/) --main-color を Primary Green として採用(値は不変) */
+  --primary: #249586;
+  --primary-hover: #1f8073;
+  --primary-light: color-mix(in oklch, var(--primary) 16%, white 84%);
+  --primary-foreground: #ffffff;
+
+  --background: #f3f8f6;
+  --surface: #ffffff;
+
+  --text-primary: #16201c;
+  --text-secondary: #5c655f;
+  --text-muted: #8d958f;
+
+  --border: #e1e8e3;
+
+  /* 鮮やかさを出すため彩度の高いアクセントカラーを使用 */
+  --success: #16a34a;
+  --success-light: color-mix(in oklch, var(--success) 16%, white 84%);
+  --warning: #f59e0b;
+  --warning-light: color-mix(in oklch, var(--warning) 16%, white 84%);
+  --danger: #ef4444;
+  --danger-light: color-mix(in oklch, var(--danger) 16%, white 84%);
+
+  --card: var(--surface);
+  --card-foreground: var(--text-primary);
+  --popover: #ffffff;
+  --popover-foreground: var(--text-primary);
+  --foreground: var(--text-primary);
+  --secondary: #eef3f0;
+  --secondary-foreground: var(--text-primary);
+  --muted: #eef3f0;
+  --muted-foreground: var(--text-secondary);
+  --accent: var(--primary-light);
+  --accent-foreground: var(--primary-hover);
+  --destructive: var(--danger);
+  --input: var(--border);
+  --ring: var(--primary);
+
+  /* 単一系列の推移グラフ用シーケンシャル・ランプ(Primary Greenの明度違い) */
+  --chart-1: #c8e4e1;
+  --chart-2: #9ccfc9;
+  --chart-3: #71bab0;
+  --chart-4: #45a598;
+  --chart-5: #249586;
+
+  --radius: 0.75rem;
+
+  --sidebar: #ffffff;
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--primary-light);
+  --sidebar-accent-foreground: var(--primary-hover);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--primary);
+}
+
+.dark {
+  /* ダークモード:メインカラーは不変、背景をダーク基調+グローに */
   --primary: #249586;
   --primary-hover: #2fb3a0;
   --primary-light: color-mix(in oklch, var(--primary) 24%, var(--surface) 76%);
@@ -83,38 +141,13 @@
   --danger: #e2726b;
   --danger-light: color-mix(in oklch, var(--danger) 22%, var(--surface) 78%);
 
-  --card: var(--surface);
-  --card-foreground: var(--text-primary);
   --popover: #161e1b;
-  --popover-foreground: var(--text-primary);
-  --foreground: var(--text-primary);
   --secondary: #1a211e;
-  --secondary-foreground: var(--text-primary);
   --muted: #1a211e;
-  --muted-foreground: var(--text-secondary);
-  --accent: var(--primary-light);
   --accent-foreground: var(--primary-hover);
-  --destructive: var(--danger);
-  --input: var(--border);
-  --ring: var(--primary);
-
-  /* 単一系列の推移グラフ用シーケンシャル・ランプ(Primary Greenの明度違い) */
-  --chart-1: #c8e4e1;
-  --chart-2: #9ccfc9;
-  --chart-3: #71bab0;
-  --chart-4: #45a598;
-  --chart-5: #249586;
-
-  --radius: 0.75rem;
 
   --sidebar: #0d1210;
-  --sidebar-foreground: var(--text-primary);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: var(--primary-light);
   --sidebar-accent-foreground: var(--primary-hover);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--primary);
 }
 
 @layer base {
@@ -123,6 +156,12 @@
   }
   body {
     @apply bg-background text-foreground;
+    background-image:
+      radial-gradient(circle at 12% -12%, color-mix(in oklch, var(--primary) 14%, transparent), transparent 55%),
+      radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--primary) 10%, transparent), transparent 45%),
+      radial-gradient(circle at 50% 120%, color-mix(in oklch, var(--primary) 8%, transparent), transparent 60%);
+  }
+  .dark body {
     background-image:
       radial-gradient(circle at 12% -12%, color-mix(in oklch, var(--primary) 22%, transparent), transparent 55%),
       radial-gradient(circle at 100% 0%, color-mix(in oklch, var(--primary) 16%, transparent), transparent 45%),

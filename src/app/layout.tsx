@@ -3,6 +3,7 @@ import { Geist_Mono, Noto_Sans_JP } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-sans",
@@ -22,10 +23,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" className={`${notoSansJP.variable} ${geistMono.variable} h-full antialiased`}>
+    <html
+      lang="ja"
+      className={`${notoSansJP.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="flex min-h-full flex-col">
-        <TooltipProvider>{children}</TooltipProvider>
-        <Toaster />
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
+          <TooltipProvider>{children}</TooltipProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
