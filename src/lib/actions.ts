@@ -15,6 +15,8 @@ import {
   tickets,
   ORG_ID,
 } from "@/lib/mock/data";
+import { getSquareClient } from "@/lib/square/client";
+import { buildCustomerFromSquare } from "@/lib/square/map-customer";
 import type {
   Appointment,
   AppointmentStatus,
@@ -518,4 +520,43 @@ export async function deleteStaffAction(staffId: string) {
   if (staff.length <= 1) throw new Error("最後の1名は削除できません");
   staff.splice(index, 1);
   revalidatePath("/staff");
+}
+
+// Square → このアプリへの顧客データ取得同期(一方向)。SQUARE_ACCESS_TOKEN未設定の場合はconfigured: falseを返す。
+export async function syncSquareCustomersAction(): Promise<{
+  configured: boolean;
+  imported: number;
+  skipped: number;
+}> {
+  const client = getSquareClient();
+  if (!client) {
+    return { configured: false, imported: 0, skipped: 0 };
+  }
+
+  const fallbackStaffId = staff[0]?.id ?? "";
+  let imported = 0;
+  let skipped = 0;
+
+  const page = await client.customers.list({});
+  for await (const squareCustomer of page) {
+    if (!squareCustomer.id) continue;
+    const alreadySynced = customers.some((c) => c.squareCustomerId === squareCustomer.id);
+    if (alreadySynced) {
+      skipped++;
+      continue;
+    }
+
+    customers.push(
+      buildCustomerFromSquare(squareCustomer, {
+        id: newId("cust"),
+        organizationId: ORG_ID,
+        primaryStaffId: fallbackStaffId,
+      }),
+    );
+    imported++;
+  }
+
+  revalidatePath("/customers");
+  revalidatePath("/");
+  return { configured: true, imported, skipped };
 }

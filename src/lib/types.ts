@@ -56,6 +56,7 @@ export interface Customer {
   cautions?: string; // 注意事項(既往歴・怪我など)
   memo?: string;
   pairedCustomerId?: UUID; // ペア参加の相手(双方向で設定する)
+  squareCustomerId?: string; // Square Customers APIから同期した場合の連携元ID(重複取り込み防止用)
   createdAt: string;
   joinedAt?: string; // 体験 → 入会(active)に切り替わった日。入会者数の集計に使う
 }
