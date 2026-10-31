@@ -54,8 +54,11 @@ export function BodyMetricChart({
               fontSize: 12,
               borderRadius: 8,
               border: `1px solid ${CHART_COLORS.border}`,
-              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+              backgroundColor: CHART_COLORS.surface,
+              color: CHART_COLORS.textPrimary,
+              boxShadow: "0 8px 24px -8px rgba(0,0,0,0.5)",
             }}
+            labelStyle={{ color: CHART_COLORS.textPrimary }}
           />
           <Line
             type="monotone"

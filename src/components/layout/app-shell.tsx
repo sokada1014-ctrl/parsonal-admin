@@ -12,7 +12,7 @@ export async function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex h-dvh overflow-hidden bg-background">
       <aside className="hidden w-64 shrink-0 flex-col border-r border-border bg-sidebar md:flex">
         <div className="flex h-16 shrink-0 items-center gap-2.5 border-b border-border px-5">
-          <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-hover text-white shadow-[0_4px_12px_-2px_rgba(36,149,134,0.45)]">
+          <div className="flex size-8 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary-hover text-white shadow-[0_0_20px_-2px_rgba(36,149,134,0.75)]">
             <Dumbbell className="size-[18px]" />
           </div>
           <Link href="/" className="text-[15px] font-semibold tracking-tight text-text-primary">
